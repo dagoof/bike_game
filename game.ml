@@ -104,10 +104,11 @@ let update_sprite_entity s = function
             else
                 let (mask, mouse_pos) = Sdl.get_mouse_state () in
                 let (mouse_x, mouse_y) = unscale mouse_pos in
+                let tree' = s.sprites.tree in
                 let tree =
-                    { s.sprites.tree with
-                      Sprite_entity.x = mouse_x
-                    ; Sprite_entity.y = mouse_y
+                    { tree' with
+                      Sprite_entity.x = mouse_x - (tree'.Sprite_entity.sprite.Sprite.w / 2)
+                    ; Sprite_entity.y = mouse_y - (tree'.Sprite_entity.sprite.Sprite.h / 2)
                     }
                 in
                 { s with
