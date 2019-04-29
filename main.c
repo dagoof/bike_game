@@ -42,7 +42,7 @@ int main() {
 
 	SDL_RenderPresent(renderer);
 
-	SDL_Delay(2000l);
+	SDL_Delay(5000l);
 	TTF_CloseFont(munro);
 	TTF_Quit();
 	SDL_DestroyRenderer(renderer);

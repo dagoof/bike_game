@@ -19,7 +19,7 @@ type t =
 
 let create filename size color =
     Ttf.open_font filename size |>
-    Option.map begin fun source ->
+    Results.map begin fun source ->
         { filename = filename
         ; size = size
         ; color = color
@@ -39,7 +39,7 @@ let destroy font =
 
 let render renderer t =
     Ttf.render_text_solid t.font.source t.content t.font.color
-    |> Option.map (fun surface ->
+    |> Results.and_then (fun surface ->
         let ( w, h ) = Sdl.get_surface_size surface in
         let placement = Sdl.Rect.create t.x t.y w h in
         let result =
@@ -53,6 +53,5 @@ let render renderer t =
         Sdl.free_surface surface;
         result
     )
-    |> Option.default (Error (`Msg "font render failed"))
 
 let renderer = Renderer.create render

@@ -10,8 +10,6 @@ type t =
     }
 
 let create renderer path =
-    let fail_message = Printf.sprintf "failed to load image %s" path in
-    let fail_result = Error (`Msg fail_message) in
     let create_sprite texture (_, _, (width, height)) =
         { tex = texture
         ; w = width
@@ -19,6 +17,6 @@ let create renderer path =
         }
     in
     Image.load_texture renderer path
-    |> Option.map (fun texture ->
-        Results.map (create_sprite texture) (Sdl.query_texture texture))
-    |> Option.default fail_result
+    |> Results.and_then (fun texture ->
+        Sdl.query_texture texture |> Results.map (create_sprite texture)
+      )

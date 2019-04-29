@@ -14,14 +14,14 @@ let screen = (float_of_int width, float_of_int height)
 let font_size = 10
 let white = Sdl.Color.create 0xFF 0xFF 0xFF 0xFF
 
-exception Fucked of string
+exception Stuffed of string
 
 let value = function
-    | Error (`Msg e) -> raise (Fucked e)
+    | Error (`Msg e) -> raise (Stuffed e)
     | Ok v -> v
 
 let of_option = function
-    | None -> raise (Fucked "cant do option")
+    | None -> raise (Stuffed "cant do option")
     | Some v -> v
 
 type 'event_type action =
@@ -63,7 +63,7 @@ let init renderer =
         (fun v -> Entity.create (Random.float 128.0) 128.0)
         [1;2;3;4;5;6;7]
     ; ticks = (0, 0l)
-    ; font = munro |> Results.of_option
+    ; font = munro |> Results.value
     ; sprites = sprites
     ; tree_lifted = false
     }
