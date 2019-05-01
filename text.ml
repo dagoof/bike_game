@@ -37,21 +37,22 @@ let write font message x y =
 let destroy font =
     Ttf.close_font font.source
 
-let render renderer t =
-    Ttf.render_text_solid t.font.source t.content t.font.color
-    |> Results.and_then (fun surface ->
-        let ( w, h ) = Sdl.get_surface_size surface in
-        let placement = Sdl.Rect.create t.x t.y w h in
-        let result =
-            Sdl.create_texture_from_surface renderer surface
-            |> Results.and_then (fun texture ->
-                let result = Sdl.render_copy ~dst:placement renderer texture in
-                Sdl.destroy_texture texture;
-                result
-            )
-        in
-        Sdl.free_surface surface;
-        result
-    )
+let render renderer t : unit Sdl.result =
+  let open Monad.Resource in
+
+  let result = Sdl.(
+      Ttf.render_text_solid t.font.source t.content t.font.color,
+      free_surface
+    ) >>+ fun surface ->
+    let ( w, h ) = Sdl.get_surface_size surface in
+    let placement = Sdl.Rect.create t.x t.y w h in
+    Sdl.(
+      create_texture_from_surface renderer surface,
+      destroy_texture
+    ) >>+ fun texture ->
+    Monad.Release.return (Sdl.render_copy ~dst:placement renderer texture)
+  in
+
+  perform result
 
 let renderer = Renderer.create render

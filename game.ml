@@ -194,6 +194,35 @@ let run send =
     done
 
 let main () =
+  let open Monad.Resource in
+
+  let game =
+    Sdl.(init Init.video, quit)
+    >>+ fun () -> Ttf.(init (), quit)
+    >>+ fun () ->
+    Sdl.(
+      create_window_and_renderer
+        ~w:(width * scale)
+        ~h:(height * scale)
+        Window.shown
+    , fun (window, renderer) ->
+      destroy_renderer renderer;
+      destroy_window window
+    )
+    >>+ fun (window, renderer) ->
+    let e, send = React.E.create () in
+    let state   = React.S.fold update (init renderer) e in
+    let view    = React.S.map (draw renderer) state in
+    run send;
+    React.E.stop e;
+    React.S.stop state;
+    React.S.stop view;
+    return ()
+  in
+
+  perform game |> Results.value
+
+let mainx () =
     Sdl.init Sdl.Init.video
     |> Results.and_then Ttf.init
     |> Results.and_then (fun () ->
@@ -216,6 +245,7 @@ let main () =
         Sdl.quit ()
     )
     |> value
+
 
 let () =
     main ()

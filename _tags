@@ -1,2 +1,2 @@
-true: package(batteries,react,tsdl,tsdl_image,tsdl_ttf,result)
+true: package(batteries,react,tsdl,tsdl_image,tsdl_ttf,result,rresult)
 true: bin_annot

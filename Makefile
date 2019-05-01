@@ -6,7 +6,7 @@ FLAGS   = -lSDL2 -lSDL2_ttf
 main_c: main.c $(OBJS)
 	$(CC) $(FLAGS) -o $@ $^
 
-game.native: game.ml entity.ml player.ml renderer.ml results.ml sprite.ml sprite_entity.ml text.ml
+game.native: game.ml entity.ml player.ml renderer.ml results.ml sprite.ml sprite_entity.ml text.ml monad.ml
 	ocamlbuild -use-ocamlfind $@
 
 $(OBJS): %.o: %.c %.h
